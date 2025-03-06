@@ -1,0 +1,50 @@
+package analizadores;
+import java_cup.runtime.Symbol;
+import java.util.LinkedList;
+import java.util.List;
+
+parser code {:
+    
+    public LinkedList<Errores> listaErrores = new LinkedList<>(); 
+
+    // Manejo de errores sintácticos recuperables
+    public void syntax_error(Symbol s) {
+        listaErrores.add(new Errores(
+            "Sintáctico Recuperable",
+            "No se esperaba el componente: " + s.value,
+            s.left + 1,
+            s.right + 1
+        ));
+    }
+
+    // Manejo de errores sintácticos no recuperables
+    public void unrecovered_syntax_error(Symbol s) {
+        listaErrores.add(new Errores(
+            "Sintáctico No Recuperable",
+            "No se esperaba el componente: " + s.value,
+            s.left + 1,
+            s.right + 1
+        ));
+    }
+:}
+
+terminal String IDENTIFICADOR;
+terminal String OPERAR,ENTERO,DECIMAL,MAS,MENOS,MULTI,DIV;
+
+non terminal inicio, estructuras, estructura,operadores;
+
+start with inicio;
+
+inicio ::= estructuras;
+
+estructuras ::= estructura estructuras
+             | estructura
+             ;
+
+estructura ::= OPERAR ENTERO operadores ENTERO
+            ;
+ operadores::= MAS
+            | MENOS
+            | MULTI
+            | DIV
+            ;            
